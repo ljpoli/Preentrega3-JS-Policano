@@ -9,7 +9,7 @@ class Producto{
     this.alt = alt
   }
 }
-class productoController{
+class ProductoController{
   constructor(){
     this.listaProductos = []
   }
@@ -26,6 +26,7 @@ levantarProducto(){
   ]
 }
 
+
 mostrarEnDOM(){
 this.listaProductos.forEach(producto => {
   contenedor_productos.innerHTML += `
@@ -38,22 +39,59 @@ this.listaProductos.forEach(producto => {
           <a href="#" id= "cuadro${producto.id}" class="btn btn-primary">Agregar al carrito</a>
         </div>
         </div>`
-
 })
 
+}
 
 }
 
+class CarritoControler{
+  constructor(){
+    this.listaCarrito = []
+  }
+    agregar(producto){
+      this.listaCarrito.push(producto)
+    }  
+
+    guardarEnStorage(){
+let listaCarritoJSON = JSON.stringify(this.listaCarrito)
+localStorage.setItem("listaCarrito", listaCarritoJSON)
+}
+    limpiarContenedor_Carrito(contenedor_carrito){
+    contenedor_carrito.innerHTML = ""
+
+    }
+
+mostrarEnDOM(contenedor_carrito){
+  this.limpiarContenedor_Carrito(contenedor_carrito)
+  this.listaCarrito.forEach(producto => {
+    contenedor_carrito.innerHTML +=
+    `<div class="card mb-3" style="max-width: 540px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="${producto.img}" class="img-fluid rounded-start" alt="${producto.alt}">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">${producto.nombre}</h5>
+          <p class="card-text">Precio: $${producto.precio}</p>
+          <p class="card-text">Cantidad${producto.cantidad}</p>
+        </div>
+      </div>
+    </div>
+  </div>`
+  })
+  
+  
+}
 
 }
 
-
-const controladorProductos = new productoController()
+const controladorProductos = new ProductoController()
 
 controladorProductos.levantarProducto()
 
-let listaCarrito;
-
+const controladorCarrito = new CarritoControler()
 
 //DOM
 const contenedor_productos = document.getElementById("contenedor_productos")
@@ -72,35 +110,15 @@ controladorProductos.mostrarEnDOM(contenedor_productos)
 
 
 controladorProductos.listaProductos.forEach(producto => {
-  const btnApp = document.getElementById(`cuadro${producto.id}`)
+  const btnAP = document.getElementById(`cuadro${producto.id}`)
   btnAP.addEventListener("clic", () =>{
 
-listaCarrito.push(producto)
+controladorCarrito.agregar(producto)
+controladorCarrito.guardarEnStorage()
+controladorCarrito.mostrarEnDOM(contenedor_carrito)
 
-//Convertir objetos a Json
-let listaCarritoJSON = JSON.stringify(listaCarrito)
-localStorage.setItem("listaCarrito", listaCarritoJSON)
 
-contenedor_carrito.innerHTML = ""
 
-listaCarrito.forEach(producto => {
-contenedor_carrito.innerHTML += `
-<div class="card mb-3" style="max-width: 540px;">
-  <div class="row g-0">
-    <div class="col-md-4">
-      <img src="${producto.img}" class="img-fluid rounded-start" alt="${producto.alt}">
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <h5 class="card-title">${producto.nombre}</h5>
-        <p class="card-text">Precio: $${producto.precio}</p>
-        <p class="card-text">Cantidad${producto.cantidad}</p>
-      </div>
-    </div>
-  </div>
-</div>`
-})
 
 })
-
 })
